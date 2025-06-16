@@ -1,0 +1,1 @@
+call registrar_contrato(1, 2, "2025-03-01", "2026_03_01");
