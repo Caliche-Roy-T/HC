@@ -37,8 +37,8 @@ insert into area (nombre_area, salario) values
 ;
 
 insert into contratos (id_funcionario, id_area, fecha_inicio, fecha_fin, estado) values
-(1, 1, "2024-02-01", "2025-02-01", "activo"),
-(2, 2, "2024-04-01", "2024-12-31", "activo");
+(1, 1, "2023-02-01", "2026-02-01", "activo"),
+(2, 2, "2020-04-01", "2026-12-31", "activo");
 
 create view funcionarios_contratos as 
 select
@@ -57,7 +57,7 @@ returns int
 deterministic
 return datediff(fecha_fin, fecha_inicio);
 
-select calcular_duracion_contrato("2024-02-01", "2025-02-01") as dias;
+select calcular_duracion_contrato("2020-02-01", "2025-06-20") as dias;
 
 
 
