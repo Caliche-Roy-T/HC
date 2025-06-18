@@ -23,9 +23,10 @@ id_area int,
 fecha_inicio date,
 fecha_fin date,
 estado varchar(20),
-foreign key (id_funcionario) references funcionarios(id_funcionario),
-foreign key (id_area) references area(id_area)
+tarjeta_debito blob
 );
+#//foreign key (id_funcionario) references funcionarios(id_funcionario),
+#//foreign key (id_area) references area(id_area));
 
 insert into funcionarios (nombre, apellido, correo, telefono, fecha_ingreso) values
 ("Carlos", "Gonzalez", "ccgz@hotmail.com", "3211235436", "2023-11-17"),
@@ -36,30 +37,38 @@ insert into area (nombre_area, salario) values
 ("diseñadora", 1500.00)
 ;
 
-insert into contratos (id_funcionario, id_area, fecha_inicio, fecha_fin, estado) values
-(1, 1, "2023-02-01", "2026-02-01", "activo"),
-(2, 2, "2020-04-01", "2026-12-31", "activo");
+#//insert into contratos (id_funcionario, id_area, fecha_inicio, fecha_fin, estado, tarjeta_debito) values
+#(1, 1, "2023-02-01", "2026-02-01", "activo", aes_encrypt("3082737818264527", "qwerty")),
+#(2, 2, "2020-04-01", "2026-12-31", "activo", aes_encrypt("3082737818264527", "qwerty"));
 
-create view funcionarios_contratos as 
-select
-	f.id_funcionario,
-    f.nombre,
-    a.nombre_area,
-    c.fecha_inicio,
-    c.fecha_fin,
-    c.estado
-from funcionarios f
-join contratos c on f.id_funcionario = c.id_funcionario
-join area a on c.id_area = a.id_area;
+
+
+
+select id_funcionario,cast(aes_decrypt(tarjeta_debito, "qwerty") as char) from contratos;
+set @llave = "qwerty";
+insert into contratos ( id_funcionario, id_area, fecha_inicio, fecha_fin, estado, tarjeta_debito) values
+(1, 1, "2023-02-01", "2026-02-01", "activo", aes_encrypt("3082737818264527", @llave)),
+(2, 2, "2020-04-01", "2026-12-31", "activo", aes_encrypt("3082737818264527", @llave));
+
+select cast(aes_decrypt(tarjeta_debito,@llave)AS char) as nombre from contratos;
+
+select * from contratos;
+
+#create view funcionarios_contratos as 
+#select
+#	f.id_funcionario,
+ #   f.nombre,
+  #  a.nombre_area,
+   # c.fecha_inicio,
+    #c.fecha_fin,
+	#c.estado
+#from funcionarios f
+#join contratos c on f.id_funcionario = c.id_funcionario
+#join area a on c.id_area = a.id_area;
     
-create function calcular_duracion_contrato(fecha_inicio date, fecha_fin date)
-returns int
-deterministic
-return datediff(fecha_fin, fecha_inicio);
+#create function calcular_duracion_contrato(fecha_inicio date, fecha_fin date)
+#returns int
+#deterministic
+#return datediff(fecha_fin, fecha_inicio);
 
-select calcular_duracion_contrato("2020-02-01", "2025-06-20") as dias;
-
-
-
-    
-    
+#select calcular_duracion_contrato("2020-02-01", "2025-06-20") as dias;
